@@ -1,10 +1,10 @@
-import expressLoader from './express.js';
-import mongooseLoader from './db.js';
+const expressLoader = require("./express.js");
+const mongooseLoader = require("./db.js");
 
-export default async expressApp => {
-    //try to create connection
-    await mongooseLoader.getConnection();
-    console.log('MongoDB Intialized');
-    expressLoader(expressApp);
-    console.log('Express initialized');
+module.exports = async (expressApp) => {
+  //try to create connection
+  await mongooseLoader.getConnection();
+  console.log("MongoDB Intialized");
+  expressLoader(expressApp);
+  console.log("Express initialized");
 };

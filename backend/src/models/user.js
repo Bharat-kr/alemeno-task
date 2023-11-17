@@ -1,37 +1,44 @@
-import mongoose from 'mongoose';
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const UserSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    class: {
-        type: String,
-        required: true,
-        enum: ['content_creator', 'sound_creator'],
-    },
-    subscription_type: {
-        type: String,
-        required: true,
-        enum: ['free', 'standard', 'premium'],
-        default: 'free',
-    },
-    is_deleted: {
-        type: Boolean,
-        required: true,
-        default: false,
-    },
-    created_at: {
-        type: Date,
-        required: true,
-        default: Date.now,
-    },
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: mongoose.Types.ObjectId(),
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    match: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  created_at: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
+});
+UserSchema.pre("save", async function(next) {
+  try {
+    // Hash the password only if it's modified or new
+    if (this.isModified("password") || this.isNew) {
+      const hashedPassword = await bcrypt.hash(this.password, 10);
+      this.password = hashedPassword;
+    }
+    return next();
+  } catch (error) {
+    return next(error);
+  }
 });
 
-const model = mongoose.model('User', UserSchema);
+const user = mongoose.model("User", UserSchema);
 
-export default model;
+module.exports = user;

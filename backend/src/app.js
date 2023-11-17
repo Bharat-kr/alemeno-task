@@ -1,14 +1,14 @@
-import express from 'express';
-import config from './config/index.js'; //TODO: Why can't i leave out the /index.js part?
-import loaders from './loaders/index.js';
+const express = require("express");
+const config = require("./config/index.js"); //TODO: Why can't i leave out the /index.js part?
+const loaders = require("./loaders/index.js");
 
 async function startServer() {
-    const app = express();
+  const app = express();
 
-    loaders(app).catch(e => {
-        console.log('AN ERROR OCCURED!');
-        throw e; // TODO: sensible error handling
-    });
+  loaders(app).catch((e) => {
+    console.log("AN ERROR OCCURED!");
+    throw e; // TODO: sensible error handling
+  });
 }
 
 startServer();
