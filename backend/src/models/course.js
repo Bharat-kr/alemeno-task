@@ -58,22 +58,7 @@ const CourseSchema = new mongoose.Schema(
         },
       },
     ],
-    students: [
-      {
-        id: {
-          type: Number,
-          required: true,
-        },
-        name: {
-          type: String,
-          required: true,
-        },
-        email: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
+    students: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );

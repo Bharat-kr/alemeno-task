@@ -1,13 +1,13 @@
 const logger = require("../utils/logger");
 
 const dbService = {
-  async find(
+  async find({
     model,
     query,
     projection = { __v: 0 },
     sort = { _id: 1 },
-    options = { lean: true }
-  ) {
+    options = { lean: true },
+  }) {
     try {
       const res = await model
         .find(query, projection, options)
@@ -15,6 +15,25 @@ const dbService = {
         .select({ __v: 0 })
         .exec();
       return [res[0], null];
+    } catch (error) {
+      logger.error("Error in dbService find", error);
+      return [null, error];
+    }
+  },
+  async findAll({
+    model,
+    query,
+    projection = { __v: 0 },
+    sort = { _id: 1 },
+    options = { lean: true },
+  }) {
+    try {
+      const res = await model
+        .find(query, projection, options)
+        .sort(sort)
+        .select({ __v: 0 })
+        .exec();
+      return [res, null];
     } catch (error) {
       logger.error("Error in dbService find", error);
       return [null, error];
@@ -53,7 +72,7 @@ const dbService = {
 
   async update(model, id, updateData) {
     try {
-      const res = await model.findByIdAndUpdate(id, updateData, { new: true });
+      const res = await model.findByIdAndUpdate(id, updateData);
       return [res, null];
     } catch (error) {
       logger.error("Error in dbService Update", error);

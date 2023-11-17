@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
+    completed_courses: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+    ],
   },
   { timestamps: true }
 );

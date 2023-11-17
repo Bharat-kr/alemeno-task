@@ -10,7 +10,6 @@ const { unauthorizedResponse } = require("../utils/response");
 const authToken = async (req, res, next) => {
   try {
     let token = req.headers.authorization;
-    console.log(token);
     if (!token) return unauthorizedResponse(res, "Unauthorized access");
     token = token.split(" ")[1];
     const decodedToken = await jwtHelper.verify(token);
