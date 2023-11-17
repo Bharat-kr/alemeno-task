@@ -8,15 +8,27 @@ const dbService = {
     sort = { _id: 1 },
     options = { lean: true }
   ) {
-    return model
-      .find(query, projection, options)
-      .sort(sort)
-      .select({ __v: 0 })
-      .exec();
+    try {
+      const res = await model
+        .find(query, projection, options)
+        .sort(sort)
+        .select({ __v: 0 })
+        .exec();
+      return [res[0], null];
+    } catch (error) {
+      logger.error("Error in dbService find", error);
+      return [null, error];
+    }
   },
 
   async findById(model, id) {
-    return model.findById(id);
+    try {
+      const res = await model.findById(id);
+      return [res, null];
+    } catch (error) {
+      logger.error("Error in dbService findById", error);
+      return [null, error];
+    }
   },
 
   async create(model, data) {

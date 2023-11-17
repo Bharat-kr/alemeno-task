@@ -1,17 +1,23 @@
 const {
   serverErrorResponse,
-  badRequestResponse,
   successResponse,
   unprocessableEntityResponse,
+  notFoundResponse,
+  createdSuccessResponse,
+  badRequestResponse,
 } = require("../utils/response");
+const bcrypt = require("bcrypt");
 const dbService = require("../services/dbService");
 const logger = require("../utils/logger");
 const DB_MODELS = require("../utils/modelEnums");
+const jwtHelper = require("../helpers/jwt");
 
-const getUser = async () => {
+const getUser = async (req, res) => {
   try {
+    return successResponse(res, "User Fetched SuccessFully", req.user);
   } catch (error) {
-    console.log(error);
+    logger.error(`Error While getting User : ${error.message}`);
+    return serverErrorResponse(res, "Error while getting User!");
   }
 };
 const login = async (req, res) => {
@@ -22,21 +28,32 @@ const login = async (req, res) => {
     if (!email) unprocessableEntityResponse(res, "email not found");
     if (!password) unprocessableEntityResponse(res, "password not found");
 
-    const user = await dbService.find(user, { email });
+    const [userFound, userErr] = await dbService.find(DB_MODELS.USER, {
+      email,
+    });
+    console.log(userFound);
+    if (userErr) return notFoundResponse(res, "User Not Found");
+
+    if (!bcrypt.compareSync(password, userFound.password))
+      return unauthorizedResponse(
+        res,
+        "Password does not match. Kindly retry."
+      );
 
     const accessToken = jwtHelper.generate({
-      user_id: user.user_id,
-      first_name: user.first_name,
-      role: user.role,
-      primary_email: user.primary_email,
-      company_id: user.company_id,
+      _id: userFound._id,
+      name: userFound.name,
+      email: userFound.email,
     });
 
-    delete user.password;
-    delete user.created_at;
-    delete user.updated_at;
+    delete userFound.password;
+    delete userFound.createdAt;
+    delete userFound.updatedAt;
 
-    return successResponse(res, "Login successful", { ...user, accessToken });
+    return successResponse(res, "Login successful", {
+      ...userFound,
+      accessToken,
+    });
   } catch (error) {
     logger.error(`Error While login : ${error.message}`);
     return serverErrorResponse(res, "Error while login!");
@@ -54,8 +71,8 @@ const signup = async (req, res) => {
       password,
     });
     if (userErr) return serverErrorResponse(res, userErr);
-    logger.info("User created successfully!");
-    return successResponse(res, "User Created successfully", userRes);
+    logger.success("User created successfully!");
+    return createdSuccessResponse(res, "User Created successfully", userRes);
   } catch (error) {
     logger.error(`Error While Signup : ${error.message}`);
     return serverErrorResponse(res, "Error while Signup!");

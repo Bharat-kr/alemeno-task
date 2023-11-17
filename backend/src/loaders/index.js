@@ -1,10 +1,11 @@
 const expressLoader = require("./express.js");
 const mongooseLoader = require("./db.js");
+const logger = require("../utils/logger.js");
 
 module.exports = async (expressApp) => {
   //try to create connection
   await mongooseLoader.getConnection();
-  console.log("MongoDB Intialized");
+  logger.success("MongoDB Intialized  🚀🚀");
   expressLoader(expressApp);
-  console.log("Express initialized");
+  logger.success("Express initialized 🚀🚀");
 };
