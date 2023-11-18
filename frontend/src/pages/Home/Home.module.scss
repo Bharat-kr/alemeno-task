@@ -1,21 +1,46 @@
 .home {
   width: 100%;
   height: 100%;
-  padding: 0 100px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 20px;
   align-items: center;
-  ul {
-    display: grid;
-    grid-template-columns: 6fr 6fr;
-    li {
-      font-weight: 500;
-      display: grid;
-      grid-template-columns: 3fr 6fr;
-      align-content: center;
-      gap: 40px;
-      margin: 10px;
+  justify-content: center;
+  h1 {
+    color: rgb(0, 216, 216);
+  }
+  p {
+    span {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+  .inner {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 40%;
+    .inputs {
+      width: 100%;
+      h3 {
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .home {
+    .inner {
+      width: 80%;
+    }
+  }
+}
+@media screen and (max-width: 400px) {
+  .home {
+    .inner {
+      width: 100%;
     }
   }
 }

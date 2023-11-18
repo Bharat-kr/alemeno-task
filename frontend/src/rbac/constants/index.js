@@ -1,7 +1,7 @@
 import ADMIN_ROUTES from './admin';
-import CUSTOMER_ROUTES from './customer';
+import STUDENT_ROUTES from './student';
 
 export const ROLE_ROUTES = {
   admin: ADMIN_ROUTES,
-  customer: CUSTOMER_ROUTES
+  student: STUDENT_ROUTES
 };

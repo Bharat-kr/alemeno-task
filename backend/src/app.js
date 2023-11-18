@@ -1,14 +1,26 @@
+//Packages
 const express = require("express");
-const config = require("./config/index.js"); //TODO: Why can't i leave out the /index.js part?
-const loaders = require("./loaders/index.js");
+const cors = require("cors");
+const helmet = require("helmet");
+const morgan = require("morgan");
+const routes = require("./routes/index");
 
-async function startServer() {
-  const app = express();
+const app = express();
 
-  loaders(app).catch((e) => {
-    console.log("AN ERROR OCCURED!");
-    throw e; // TODO: sensible error handling
-  });
-}
+// Middlewares
+app.use(cors({}));
+app.use(helmet());
+app.use(morgan("common"));
+app.use(express.json({ limit: "50mb", extended: true, parameterLimit: 50000 }));
+app.use(
+  express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 })
+);
 
-startServer();
+// Routes
+app.use("/api", routes);
+
+app.get("/", (_, res) => {
+  res.status(200).send("Backend Service Running!");
+});
+
+module.exports = app;

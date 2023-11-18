@@ -14,9 +14,6 @@ module.exports = {
    * Your favorite port
    */
   PORT: parseInt(process.env.PORT, 10),
-  API: {
-    PREFIX: "/api",
-  },
   databaseURL: process.env.DATABASE_URL,
   JWT_SECRET: process.env.JWT_SECRET,
 };

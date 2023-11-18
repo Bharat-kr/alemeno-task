@@ -28,10 +28,12 @@ const login = async (req, res) => {
     if (!email) unprocessableEntityResponse(res, "email not found");
     if (!password) unprocessableEntityResponse(res, "password not found");
 
-    const [userFound, userErr] = await dbService.find(DB_MODELS.USER, {
-      email,
+    const [userFound, userErr] = await dbService.find({
+      model: DB_MODELS.USER,
+      query: {
+        email,
+      },
     });
-    console.log(userFound);
     if (userErr) return notFoundResponse(res, "User Not Found");
 
     if (!bcrypt.compareSync(password, userFound.password))
@@ -62,10 +64,11 @@ const login = async (req, res) => {
 const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    if (!email) unprocessableEntityResponse(res, "email not found");
-    if (!password) unprocessableEntityResponse(res, "password not found");
-    if (!name) unprocessableEntityResponse(res, "name not found");
-    const [userRes, userErr] = await dbService.create(DB_MODELS.USER, {
+    if (!email) return unprocessableEntityResponse(res, "email not found");
+    if (!password)
+      return unprocessableEntityResponse(res, "password not found");
+    if (!name) return unprocessableEntityResponse(res, "name not found");
+    const [userRes, userErr] = await DB_MODELS.USER.create({
       name,
       email,
       password,
