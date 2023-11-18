@@ -45,16 +45,9 @@ const AuthProvider = ({ children }) => {
   }, [authenticated]);
 
   return (
-    <>
-      {!loading && user ? (
-        <AuthContext.Provider
-          value={{ user, setUser, authenticated, setAuthenticated, updateUser }}>
-          {children}
-        </AuthContext.Provider>
-      ) : (
-        'Loading'
-      )}
-    </>
+    <AuthContext.Provider value={{ user, setUser, authenticated, setAuthenticated, updateUser }}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 export default AuthProvider;
