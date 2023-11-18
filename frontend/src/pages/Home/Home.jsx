@@ -29,7 +29,7 @@ const Home = () => {
   const buttonHandler = async () => {
     if (state === 'login') {
       await login(data, (res) => {
-        localStorage.setItem('user', JSON.stringify(res.data));
+        localStorage.setItem('token', res.data.accessToken);
         navigate('/dashboard');
       });
     } else {

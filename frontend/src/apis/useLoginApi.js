@@ -31,8 +31,21 @@ const useLoginApi = () => {
       setLoading(false);
     }
   };
+  const getUser = async (cb) => {
+    setError('');
+    setLoading(true);
+    try {
+      const res = await axios.get('/user');
+      if (res.status !== 200) throw new Error(res.msg || 'Some error occured, please try again');
+      if (cb && typeof cb === 'function') cb(res.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  return { error, loading, login, signup };
+  return { error, loading, login, signup, getUser };
 };
 
 export default useLoginApi;

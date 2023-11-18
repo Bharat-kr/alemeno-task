@@ -1,20 +1,24 @@
 import axios from 'axios';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useLoginApi from '../apis/useLoginApi';
 
 const AuthContext = createContext({});
 export const useAuth = () => useContext(AuthContext);
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+  const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
+  const { getUser } = useLoginApi();
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const init = async () => {
-      if (user) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${user?.accessToken}`;
+      if (token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        updateUser();
         setLoading(false);
         setAuthenticated(true);
       } else {
@@ -23,7 +27,15 @@ const AuthProvider = ({ children }) => {
       }
     };
     init();
-  }, [user]);
+  }, [token]);
+
+  const updateUser = async () => {
+    await getUser((data) => {
+      setUser((prev) => {
+        return { ...prev, ...data.data };
+      });
+    });
+  };
 
   useEffect(() => {
     if (authenticated === false) {
@@ -31,10 +43,17 @@ const AuthProvider = ({ children }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authenticated]);
-  console.log(loading, authenticated);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, authenticated }}>{children}</AuthContext.Provider>
+    <>
+      {!loading && user ? (
+        <AuthContext.Provider value={{ user, setUser, authenticated, updateUser }}>
+          {children}
+        </AuthContext.Provider>
+      ) : (
+        'Loading'
+      )}
+    </>
   );
 };
 export default AuthProvider;

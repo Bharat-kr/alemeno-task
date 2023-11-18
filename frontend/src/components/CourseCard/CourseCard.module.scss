@@ -1,0 +1,23 @@
+.card {
+  cursor: pointer;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 4px 4px 20px #d4d4d4;
+  width: 25%;
+  padding: 20px;
+  img {
+    width: 100%;
+    border-radius: 5px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .card {
+    width: 100%;
+  }
+}
+@media (min-width: 400px) and (max-width: 800px) {
+  .card {
+    width: 50%;
+  }
+}
